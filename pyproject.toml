@@ -1,0 +1,44 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aliyun-inventory"
+version = "0.1.0"
+description = "阿里云多账号资源同步与查询工具"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = [
+    "alibabacloud-ecs20140526>=0.1.0",
+    "alibabacloud-alidns20150109>=0.1.0",
+    "alibabacloud-vpc20160428>=0.1.0",
+    "alibabacloud-slb20140515>=0.1.0",
+    "alibabacloud-alb20200616>=0.1.0",
+    "alibabacloud-sls20201230>=0.1.0",
+    "alibabacloud-ram20150501>=0.1.0",
+    "alibabacloud-cdn20180510>=0.1.0",
+    "alibabacloud-cloudapi20160714>=0.1.0",
+    "alibabacloud-mse20190531>=0.1.0",
+    "alibabacloud-apig20240327>=0.1.0",
+    "alibabacloud-sae20190506>=0.1.0",
+    "alibabacloud-tea-openapi>=0.3.0",
+    "oss2>=2.18.0",
+    "alibabacloud-rds20140815>=0.1.0",
+    "alibabacloud-waf-openapi20190910>=0.1.0",
+    "alibabacloud-r_kvstore20150101>=0.1.0",
+    "alibabacloud-polardb20170801>=0.1.0",
+    "alibabacloud-dds20151201>=0.1.0",
+    "sqlalchemy>=2.0",
+    "typer>=0.9",
+    "rich>=13.0",
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0",
+]
+
+[project.scripts]
+aliyun-inv = "aliyun_inventory.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aliyun_inventory"]

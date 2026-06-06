@@ -1,0 +1,38 @@
+# 阿里云多账号配置示例
+# 复制此文件为 accounts.yaml 并按实际账号信息修改
+# 命令: cp config/accounts.example.yaml config/accounts.yaml
+
+accounts:
+  - name: domain-main
+    display_name: 域名主账号
+    credential_env_prefix: DOMAIN_MAIN
+    enabled: true
+    resources:
+      dns: true
+      # 域名账号通常只同步 DNS，其他资源设为 false 或不填（默认 false）
+      ecs: false
+      eip: false
+
+  - name: prod-a
+    display_name: 生产账号A
+    credential_env_prefix: PROD_A
+    enabled: true
+    resources:
+      # 支持 15 种资源类型：dns ecs eip clb alb sls ram cdn api oss rds waf tair polardb mongodb
+      # 简写格式：直接布尔值
+      dns: true
+      ecs: true
+      eip: true
+      clb: true
+      alb: true
+      sls: true
+      ram: true
+      cdn: true
+      api: true
+      oss: true
+      # 嵌套格式：{enabled: true}（两种格式等价）
+      rds: {enabled: true}
+      waf: {enabled: true}
+      tair: {enabled: true}
+      polardb: {enabled: true}
+      mongodb: {enabled: true}
