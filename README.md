@@ -98,16 +98,16 @@ cp .env.example .env
 # PREFIX 必须与 config/accounts.yaml 中的 credential_env_prefix 一致
 
 # 账号1
-DUOGUAN_WENLONG_ACCESS_KEY_ID=LTAI5t...
-DUOGUAN_WENLONG_ACCESS_KEY_SECRET=xxxx...
+XXXXXX_ACCESS_KEY_ID=LTAI5t...
+XXXXXX_ACCESS_KEY_SECRET=xxxx...
 
 # 账号2
-DUOGUAN_CANZAN_ACCESS_KEY_ID=LTAI5t...
-DUOGUAN_CANZAN_ACCESS_KEY_SECRET=xxxx...
+YYYYYY_ACCESS_KEY_ID=LTAI5t...
+YYYYYY_ACCESS_KEY_SECRET=xxxx...
 
 # 域名账号
-DUOGUAN_DOMAIN_ACCESS_KEY_ID=LTAI5t...
-DUOGUAN_DOMAIN_ACCESS_KEY_SECRET=xxxx...
+ZZZZZZ_ACCESS_KEY_ID=LTAI5t...
+ZZZZZZ_ACCESS_KEY_SECRET=xxxx...
 
 # 数据库路径（默认，可修改）
 ALIYUN_INVENTORY_DATABASE_URL=sqlite:///data/aliyun_inventory.db
@@ -127,9 +127,9 @@ cp config/accounts.example.yaml config/accounts.yaml
 
 ```yaml
 accounts:
-  - name: wenlong@duoguan.com      # 账号标识名（唯一）
-    display_name: 夺冠阿里云         # 显示名称
-    credential_env_prefix: DUOGUAN_WENLONG  # 对应 .env 中 AK/SK 的前缀
+  - name: abc@xyz.com      # 账号标识名（唯一）
+    display_name: A阿里云         # 显示名称
+    credential_env_prefix: xxxxxx  # 对应 .env 中 AK/SK 的前缀
     enabled: true
     resources:
       ecs: true                # 简写格式：直接布尔值
@@ -150,9 +150,9 @@ accounts:
       security_group: true
       sae: true
 
-  - name: 397484496@qq.com        # 域名账号，只同步 DNS 和 RAM
-    display_name: 域名阿里云
-    credential_env_prefix: DUOGUAN_DOMAIN
+  - name: xyz@abc.com        # 域名账号，只同步 DNS 和 RAM
+    display_name: B阿里云
+    credential_env_prefix: YYYYYYY
     enabled: true
     resources:
       dns: true
@@ -167,7 +167,7 @@ accounts:
 |------|------|------|
 | `name` | ✅ | 账号标识名，唯一，用于数据库中区分不同账号的资源 |
 | `display_name` | ✅ | 显示名称，查询结果中展示的中文名 |
-| `credential_env_prefix` | ✅ | 对应 `.env` 中 AK/SK 的前缀，如 `DUOGUAN_WENLONG` → `DUOGUAN_WENLONG_ACCESS_KEY_ID` |
+| `credential_env_prefix` | ✅ | 对应 `.env` 中 AK/SK 的前缀，如 `XXXXXXX` → `XXXXXXX_ACCESS_KEY_ID` |
 | `enabled` | ✅ | 是否启用同步，`false` 则跳过此账号 |
 | `resources.<type>` | ✅ | 各资源类型是否启用同步，支持两种格式：`true` 或 `{enabled: true}`，未列出默认 `false` |
 
@@ -218,20 +218,20 @@ aliyun-inv sync all --resource sae
 #### 同步单个账号
 
 ```bash
-aliyun-inv sync account wenlong@duoguan.com
+aliyun-inv sync account abc@xyz.com
 ```
 
 #### 同步单个账号的指定资源类型
 
 ```bash
-aliyun-inv sync account wenlong@duoguan.com --resource rds
-aliyun-inv sync account wenlong@duoguan.com --resource sae
+aliyun-inv sync account abc@xyz.com --resource rds
+aliyun-inv sync account abc@xyz.com --resource sae
 ```
 
 #### 同步单个账号的指定地域
 
 ```bash
-aliyun-inv sync account wenlong@duoguan.com --resource ecs --region cn-hangzhou
+aliyun-inv sync account abc@xyz.com --resource ecs --region cn-hangzhou
 ```
 
 > 💡 同步采用 **upsert** 机制：已有资源会更新，新增资源会插入，不会重复创建。每次同步更新 `last_seen_at` 和 `raw_json`。
@@ -253,8 +253,8 @@ aliyun-inv sync account wenlong@duoguan.com --resource ecs --region cn-hangzhou
 ```bash
 aliyun-inv query ip 1.2.3.4
 aliyun-inv query ip 1.2.3.4 --json
-aliyun-inv query ip 59.110.50.251 --chain       # 链路超过5条时，强制展开完整链路详情
-aliyun-inv query ip 59.110.50.251 --chain --limit 5  # 只展示前5条链路
+aliyun-inv query ip 1.1.1.1 --chain       # 链路超过5条时，强制展开完整链路详情
+aliyun-inv query ip 1.1.1.1 --chain --limit 5  # 只展示前5条链路
 ```
 
 > 💡 IP 查询的命中资源只展示 ECS、EIP、LB 等实际资源，DNS 解析记录在下方的专用表格中单独展示，不会重复出现在命中资源中。
@@ -264,9 +264,9 @@ aliyun-inv query ip 59.110.50.251 --chain --limit 5  # 只展示前5条链路
 ```bash
 aliyun-inv query domain www.example.com
 aliyun-inv query domain www.example.com --json
-aliyun-inv query domain m.duoguan.com --exact     # 精确匹配，只返回该完整域名
-aliyun-inv query domain flashnet.cn --chain       # 链路超过5条时展开详情
-aliyun-inv query domain flashnet.cn --chain --limit 3  # 只展示前3条链路
+aliyun-inv query domain abc@xyz.com --exact     # 精确匹配，只返回该完整域名
+aliyun-inv query domain xyz@abc.com --chain       # 链路超过5条时展开详情
+aliyun-inv query domain xyz@abc.com --chain --limit 3  # 只展示前3条链路
 ```
 
 #### 查询资源 ID
@@ -291,12 +291,12 @@ aliyun-inv query resource LTAIxxxx        # AccessKey ID（找到关联的 RAM �
 ```bash
 aliyun-inv query resource web-01          # 按实例名称
 aliyun-inv query resource 生产            # 按描述/备注
-aliyun-inv query resource chuandao-overflow  # 按项目名（同时匹配 OSS bucket、SLS project 等）
+aliyun-inv query resource project  # 按项目名（同时匹配 OSS bucket、SLS project 等）
 aliyun-inv query resource 10.0.1.10       # 按私网 IP（自动识别为 IP）
 aliyun-inv query resource www.example.com # 按域名（自动识别为域名）
-aliyun-inv query resource m.duoguan.com --exact  # 精确匹配，只返回完全等于该值的资源
-aliyun-inv query resource 59.110.50.251 --chain   # 链路超过5条时，强制展开完整链路详情
-aliyun-inv query resource 59.110.50.251 --chain --limit 5  # 只展示前5条链路
+aliyun-inv query resource xyz@abc.com --exact  # 精确匹配，只返回完全等于该值的资源
+aliyun-inv query resource 1.1.1.1 --chain   # 链路超过5条时，强制展开完整链路详情
+aliyun-inv query resource 1.1.1.1 --chain --limit 5  # 只展示前5条链路
 ```
 
 #### 资源详情
@@ -343,9 +343,9 @@ aliyun-inv query list ram              # 列出所有 RAM 用户
 支持按账户和地域过滤：
 
 ```bash
-aliyun-inv query list ecs --account 夺冠              # 夺冠账户的 ECS（支持账户名/显示名模糊匹配）
+aliyun-inv query list ecs --account xyz@abc.com              # 夺冠账户的 ECS（支持账户名/显示名模糊匹配）
 aliyun-inv query list rds --region cn-hangzhou        # 杭州地域的 RDS
-aliyun-inv query list ecs --account 夺冠 --region cn-beijing  # 组合过滤
+aliyun-inv query list ecs --account xyz@abc.com --region cn-beijing  # 组合过滤
 aliyun-inv query list dns --json                      # JSON 格式输出
 aliyun-inv query list ecs --json                      # JSON 格式输出
 ```
@@ -359,48 +359,48 @@ aliyun-inv query list ecs --json                      # JSON 格式输出
 ### 文本输出 — 通用查询
 
 ```txt
-查询: chuandao-overflow (类型: resource_id)
+查询: project (类型: resource_id)
 
                                     命中资源
 ┏━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
 ┃ 账号     ┃ 地域     ┃ 资源类型 ┃ 资源ID    ┃ 资源名称 ┃ 内网地址  ┃ 外网地址 ┃
 ┡━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━┩
-│ 餐赞阿里… │ oss-cn-… │ OSS      │ chuandao… │ chuanda… │ oss-cn-h… │ oss-cn-… │
-│ 餐赞阿里… │ cn-hang… │ SLS      │ chuandao… │ chuanda… │           │          │
-│ 夺冠阿里… │ cn-beij… │ SLS      │ chuandao… │ chuanda… │           │          │
+│ 餐赞阿里… │ oss-cn-… │ OSS      │ project… │ project… │ oss-cn-h… │ oss-cn-… │
+│ 餐赞阿里… │ cn-hang… │ SLS      │ project… │ project… │           │          │
+│ 夺冠阿里… │ cn-beij… │ SLS      │ project… │ project… │           │          │
 └──────────┴──────────┴──────────┴───────────┴──────────┴───────────┴──────────┘
 ```
 
 ### 文本输出 — 域名查询（带链路树）
 
 ```txt
-查询: www.xduoguan.com (类型: domain)
+查询: www.abc.com (类型: domain)
 
                                     命中资源
 ┏━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
 ┃ 账号     ┃ 地域     ┃ 资源类型 ┃ 资源ID    ┃ 资源名称 ┃ 内网地址  ┃ 外网地址 ┃
 ┡━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━┩
-│ 夺冠阿里… │ global   │ DNS      │ 123456    │ www.xd… │           │ 1.2.3.4  │
-│ 夺冠阿里… │ cn-beij… │ CLB      │ lb-xxxx   │ 本地生… │           │ 1.2.3.4  │
+│ 阿里… │ global   │ DNS      │ 123456    │ www.xd… │           │ 1.2.3.4  │
+│ 阿里… │ cn-beij… │ CLB      │ lb-xxxx   │ 项目… │           │ 1.2.3.4  │
 └──────────┴──────────┴──────────┴───────────┴──────────┴───────────┴──────────┘
 
 可能链路 [dns_to_lb]:
-www.xduoguan.com
-  └ CLB 本地生活平台负载 / lb-xxxx / 夺冠阿里云 / cn-beijing / IP: 1.2.3.4
-     └ ECS 后端 / i-xxxx1 / 夺冠阿里云 / cn-beijing / IP: 10.0.x.x
-     └ ECS 后端 / i-xxxx2 / 夺冠阿里云 / cn-beijing / IP: 10.0.x.x
+www.abc.com
+  └ CLB 平台负载 / lb-xxxx / A阿里云 / cn-beijing / IP: 1.2.3.4
+     └ ECS 后端 / i-xxxx1 / B阿里云 / cn-beijing / IP: 10.0.x.x
+     └ ECS 后端 / i-xxxx2 / C阿里云 / cn-beijing / IP: 10.0.x.x
 ```
 
 ### 文本输出 — APIG 链路（DNS→APIG→SAE）
 
 ```txt
-查询: mofang.xduoguan.com (类型: domain)
+查询: abc@xyz.com (类型: domain)
 
 可能链路 [dns_to_sae]:
-mofang.xduoguan.com
-  └ 云原生API网关 gw-xxxx / 餐赞阿里云 / cn-beijing
-     └ 路由: 魔方小程序-获取用户信息 → SAE后端(duoguan-wechat-miniapp)
-     └ 路由: 魔方小程序-支付 → SAE后端(duoguan-wechat-miniapp)
+abc@xyz.com
+  └ 云原生API网关 gw-xxxx / A阿里云 / cn-beijing
+     └ 路由: 小程序-获取用户信息 → SAE后端(wechat-miniapp)
+     └ 路由: 小程序-支付 → SAE后端(wechat-miniapp)
 ```
 
 ### JSON 输出
@@ -698,21 +698,21 @@ aliyun-inv query detail <APIG group_id> --json
 
 - **精确匹配**：使用 `--exact` / `-e` 参数，只返回完全等于查询值的记录，不做模糊搜索：
   ```bash
-  aliyun-inv query resource m.duoguan.com --exact   # 只返回 m.duoguan.com，不返回其他 duoguan.com 子域名
-  aliyun-inv query domain flashnet.cn --exact       # 只返回 flashnet.cn 的解析记录
+  aliyun-inv query resource abc@xyz.com --exact   # 只返回 abc@xyz.com，不返回其他 xyz.com 子域名
+  aliyun-inv query domain xyz@abc.com --exact       # 只返回 xyz@abc.com 的解析记录
   ```
 - **链路折叠**：当链路数量超过 5 条时，默认只显示摘要（如"确定性链路: 101 条"），使用 `--chain` 展开完整详情：
   ```bash
-  aliyun-inv query resource 59.110.50.251           # 链路超过5条 → 显示摘要
-  aliyun-inv query resource 59.110.50.251 --chain   # 展开全部链路
-  aliyun-inv query resource 59.110.50.251 --chain --limit 5  # 只展示前5条链路
+  aliyun-inv query resource 1.1.1.1           # 链路超过5条 → 显示摘要
+  aliyun-inv query resource 2.2.2.2 --chain   # 展开全部链路
+  aliyun-inv query resource 3.3.3.3 --chain --limit 5  # 只展示前5条链路
   ```
 - **链路 ≤5 条时自动展示**，不需要 `--chain` 参数
 
 ### 同步报错 "AK/SK 未配置"？
 
 - 检查 `.env` 中的环境变量名是否与 `config/accounts.yaml` 中的 `credential_env_prefix` 一致
-- 例如 `credential_env_prefix: DUOGUAN_WENLONG` → 需要 `DUOGUAN_WENLONG_ACCESS_KEY_ID` 和 `DUOGUAN_WENLONG_ACCESS_KEY_SECRET`
+- 例如 `credential_env_prefix: XXXXX` → 需要 `XXXXX_ACCESS_KEY_ID` 和 `XXXXX_ACCESS_KEY_SECRET`
 
 ### 如何在定时任务中使用？
 
